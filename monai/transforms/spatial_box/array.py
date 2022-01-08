@@ -192,6 +192,8 @@ class BoxFlip(Transform):
 
         if self.spatial_axis is None:
             self.spatial_axis = list(range(0, len(image_size)))
+        if isinstance(self.spatial_axis, int):
+            self.spatial_axis = [self.spatial_axis]
 
         # clip box to the image and (optional) remove empty box
         bbox_clip = box_utils.box_clip_to_image(bbox_tensor, image_size, self.mode, self.remove_empty)
@@ -199,8 +201,8 @@ class BoxFlip(Transform):
         # flip box
         flip_bbox_clip = deepcopy(bbox_clip)
         for axis in self.spatial_axis:
-            flip_bbox_clip[2 * axis + 1] = image_size[axis] - bbox_clip[:, 2 * axis] - box_utils.TO_REMOVE
-            flip_bbox_clip[2 * axis] = image_size[axis] - bbox_clip[:, 2 * axis + 1] - box_utils.TO_REMOVE
+            flip_bbox_clip[:, 2 * axis + 1] = image_size[axis] - bbox_clip[:, 2 * axis] - box_utils.TO_REMOVE
+            flip_bbox_clip[:, 2 * axis] = image_size[axis] - bbox_clip[:, 2 * axis + 1] - box_utils.TO_REMOVE
 
         if isinstance(bbox, np.ndarray):
             flip_bbox_clip = flip_bbox_clip.cpu().numpy()

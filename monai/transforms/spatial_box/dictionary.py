@@ -24,6 +24,7 @@ import torch
 
 from monai.config import DtypeLike, KeysCollection
 from monai.config.type_definitions import NdarrayOrTensor
+from monai.data import box_utils
 from monai.networks.layers import AffineTransform
 from monai.networks.layers.simplelayers import GaussianFilter
 from monai.transforms.croppad.array import CenterSpatialCrop, SpatialPad
@@ -210,6 +211,11 @@ class BoxClipToImaged(MapTransform, InvertibleTransform):
         allow_missing_keys: bool = False,
     ) -> None:
         super().__init__(box_keys, allow_missing_keys)
+        if (box_mode is not None) and (box_mode not in box_utils.STANDARD_MODE):
+            ValueError(
+                "Currently we support only standard box_mode."
+                "Please apply BoxConvertToStandardd first and then set box_mode=None."
+            )
         self.image_key = image_key
         self.clipper = BoxClipToImage(mode=box_mode, remove_empty=remove_empty)
 
@@ -251,6 +257,11 @@ class BoxFlipd(MapTransform, InvertibleTransform):
         allow_missing_keys: bool = False,
     ) -> None:
         super().__init__(box_keys, allow_missing_keys)
+        if (box_mode is not None) and (box_mode not in box_utils.STANDARD_MODE):
+            ValueError(
+                "Currently we support only standard box_mode."
+                "Please apply BoxConvertToStandardd first and then set box_mode=None."
+            )
         self.flipper = BoxFlip(spatial_axis=spatial_axis, mode=box_mode, remove_empty=remove_empty)
         self.image_key = image_key
         self.remove_empty = remove_empty
