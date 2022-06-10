@@ -595,7 +595,8 @@ class RandBiasField(RandomizableTransform):
 
 class NormalizeIntensity(Transform):
     """
-    Normalize input based on provided args, using calculated mean and std if not provided.
+    Normalize input based on the `subtrahend` and `divisor`: `(img - subtrahend) / divisor`.
+    Use calculated mean or std value of the input image if no `subtrahend` or `divisor` provided.
     This transform can normalize only non-zero values or entire image, and can also calculate
     mean and std on each channel separately.
     When `channel_wise` is True, the first dimension of `subtrahend` and `divisor` should
@@ -2210,7 +2211,6 @@ class ForegroundMask(Transform):
             raise ValueError(
                 f"Threshold for at least one channel of RGB or HSV needs to be set. {self.thresholds} is provided."
             )
-
         self.invert = invert
 
     def _set_threshold(self, threshold, mode):
